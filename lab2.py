@@ -13,9 +13,10 @@ for i in range(40, 60):
         Terminals[i, j] = 12
 
 
-terminal_mask = Terminals > 0
+e = 0.01
 
-#print(X[~perimeter_mask])
+
+terminal_mask = Terminals > 0
 
 V = Terminals
 
@@ -36,7 +37,6 @@ def relaxation(grid):
 
     result[1:-1, 1:-1] = avg_neighbors[1:-1, 1:-1]
 
-
     return result
 
 
@@ -55,12 +55,13 @@ def neumann(grid):
     return border_values
 
 
-for i in range(2000):
+while True:
+    previousV = V
     V = relaxation(V)
     V = neumann(V)
-
-print(V)
-print(Terminals)
+    diff = numpy.abs(V - previousV).max()
+    if diff < e:
+        break
 
 
 fig3d, ax3d = matplotlib.subplots(subplot_kw={"projection": "3d"})
