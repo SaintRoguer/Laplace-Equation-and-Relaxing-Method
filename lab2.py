@@ -9,14 +9,18 @@ V = numpy.zeros(X.shape)
 Terminals = numpy.zeros(X.shape)
 
 for i in range(40, 60):
-    for j in range (70, 90):
+    for j in range (40, 60):
         Terminals[i, j] = 12
 
+for i in range(100, 120):
+    for j in range (40, 60):
+        Terminals[i, j] = -12
 
-e = 0.01
+
+e = float(input("value of epsilon: "))
 
 
-terminal_mask = Terminals > 0
+terminal_mask = Terminals != 0
 
 V = Terminals
 
@@ -43,13 +47,13 @@ def relaxation(grid):
 def neumann(grid):
     border_values = grid.copy()
 
-    # Top border
+    # Borde superior
     border_values[0, :] = grid[1, :]
-    # Bottom border
+    # Borde inferior
     border_values[-1, :] = grid[-2, :]
-    # Left border
+    # Borde izquierdo
     border_values[:, 0] = grid[:, 1]
-    # Right border
+    # Borde derecho
     border_values[:, -1] = grid[:, -2]
 
     return border_values
@@ -64,22 +68,29 @@ while True:
         break
 
 
-fig3d, ax3d = matplotlib.subplots(subplot_kw={"projection": "3d"})
-surf = ax3d.plot_surface(X, Y, V, cmap='coolwarm', linewidth=0, antialiased=False)
+fig = matplotlib.figure(figsize=matplotlib.figaspect(0.4))
 
-matplotlib.style.use('_mpl-gallery-nogrid')
-fig, ax = matplotlib.subplots(1, 1, figsize=(6, 6))
+ax = fig.add_subplot(1, 2, 1)
+levels = numpy.linspace(V.min(), V.max(), 40)
+contour = ax.contourf(X, Y, V, levels=levels, cmap='coolwarm')
 
-levels = numpy.linspace(V.min(), V.max(), 7)
 
-contour = ax.contourf(X, Y, V, levels=levels)
+ax3d = fig.add_subplot(1, 2, 2, projection='3d')
+ax3d.plot_surface(X, Y, V, cmap='coolwarm', linewidth=0, antialiased=True)
 
-# Datos extra para el grafico 2
-ax.set_title('Equipotential Lines')
+
+# Datos extra para el grafico 1
+ax.set_title('Electrostatic Potential Distribution')
 ax.set_xlabel('x [m]')
 ax.set_ylabel('y [m]')
 ax.axis('equal')
-fig.colorbar(contour, ax=ax, orientation='vertical')
+fig.colorbar(contour, ax=ax, orientation='vertical', label='electrostatic potential [V]')
+
+# Datos extra para el grafico 2
+ax3d.set_title('Electrostatic Potential Surface')
+ax3d.set_xlabel('x [m]')
+ax3d.set_ylabel('y [m]')
+ax3d.set_zlabel('electrostatic potential [V]')
 
 matplotlib.tight_layout()
 matplotlib.show()
